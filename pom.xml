@@ -74,7 +74,21 @@
 	</repositories>
 
 	<dependencies>
-
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>9.0.43</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.12</version>
+        </dependency>
 		<!-- testing depedencies -->
 
 		<dependency>
@@ -83,6 +97,16 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <version>1.2.4</version>
+        </dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -193,7 +217,8 @@
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.2</version>
+<!--			<version>1.9.2</version>-->
+            <version>1.8.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
