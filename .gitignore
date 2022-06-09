@@ -15,3 +15,7 @@ target/
 
 # tests
 pwntest
+
+*.jar
+
+src/main/java/top/*

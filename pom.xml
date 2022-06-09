@@ -22,8 +22,8 @@
 				<version>3.5.1</version>
 				<configuration>
 					<!-- maximize compatibility -->
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>8</source>
+					<target>8</target>
 					<!-- ignore noisy internal api warnings -->
                     <compilerArgument>-XDignore.symbol.file</compilerArgument>
                     <fork>true</fork>
@@ -74,6 +74,11 @@
 	</repositories>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.apereo</groupId>
+            <artifactId>spring-webflow-client-repo</artifactId>
+            <version>1.0.3</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
@@ -218,7 +223,7 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 <!--			<version>1.9.2</version>-->
-            <version>1.8.3</version>
+            <version>1.9.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -291,6 +296,11 @@
 			<artifactId>rome</artifactId>
 			<version>1.0</version>
 		</dependency>
+        <dependency>
+            <groupId>com.rometools</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.7.0</version>
+        </dependency>
         <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython-standalone</artifactId>
