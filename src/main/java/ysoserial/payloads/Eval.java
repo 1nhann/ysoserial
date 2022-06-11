@@ -5,7 +5,6 @@ import javassist.CtClass;
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
 
-import java.io.FileReader;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,7 +92,10 @@ public class Eval {
                 return null;
             }
         }
-        code = code.replaceAll("([^\\.\\w]+)"+"(DispatcherType|FilterDef|FilterChain|FilterConfig|HttpServletRequest|ServletException|ServletResponse|ServletRequest|ServletContext|Filter)"+ "([^\\w]+)","$1"+"javax.servlet."+"$2"+"$3");
+        code = code.replaceAll("([^\\.\\w]+)"+"(AsyncContext|AsyncEvent|AsyncListener|DispatcherType|Filter|FilterChain|FilterConfig|FilterRegistration|GenericFilter|GenericServlet|HttpConstraintElement|HttpMethodConstraintElement|MultipartConfigElement|ReadListener|Registration|RequestDispatcher|Servlet|ServletConfig|ServletContainerInitializer|ServletContext|ServletContextAttributeEvent|ServletContextAttributeListener|ServletContextEvent|ServletContextListener|ServletException|ServletInputStream|ServletOutputStream|ServletRegistration|ServletRequest|ServletRequestAttributeEvent|ServletRequestAttributeListener|ServletRequestEvent|ServletRequestListener|ServletRequestWrapper|ServletResponse|ServletResponseWrapper|ServletSecurityElement|SessionCookieConfig|SessionTrackingMode|SingleThreadModel|UnavailableException|WriteListener)"+ "([^\\w]+)","$1"+"javax.servlet."+"$2"+"$3");
+
+        code = code.replaceAll("([^\\.\\w]+)"+"(Cookie|CookieNameValidator|HttpFilter|HttpServlet|HttpServletMapping|HttpServletRequest|HttpServletRequestWrapper|HttpServletResponse|HttpServletResponseWrapper|HttpSession|HttpSessionActivationListener|HttpSessionAttributeListener|HttpSessionBindingEvent|HttpSessionBindingListener|HttpSessionContext|HttpSessionEvent|HttpSessionIdListener|HttpSessionListener|HttpUpgradeHandler|HttpUtils|MappingMatch|Part|PushBuilder|RFC2109Validator|RFC6265Validator|WebConnection)"+ "([^\\w]+)","$1"+"javax.servlet.http."+"$2"+"$3");
+
         return code;
     }
 
