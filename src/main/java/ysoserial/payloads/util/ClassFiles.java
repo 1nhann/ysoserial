@@ -1,5 +1,9 @@
 package ysoserial.payloads.util;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +12,7 @@ public class ClassFiles {
 	public static String classAsFile(final Class<?> clazz) {
 		return classAsFile(clazz, true);
 	}
-	
+
 	public static String classAsFile(final Class<?> clazz, boolean suffix) {
 		String str;
 		if (clazz.getEnclosingClass() == null) {
@@ -17,9 +21,9 @@ public class ClassFiles {
 			str = classAsFile(clazz.getEnclosingClass(), false) + "$" + clazz.getSimpleName();
 		}
 		if (suffix) {
-			str += ".class";			
+			str += ".class";
 		}
-		return str;  
+		return str;
 	}
 
 	public static byte[] classAsBytes(final Class<?> clazz) {
@@ -40,5 +44,14 @@ public class ClassFiles {
 			throw new RuntimeException(e);
 		}
 	}
-	
+    public static Class bytesAsClass(byte[] bytes) {
+        try {
+            ClassPool pool = ClassPool.getDefault();
+            ByteArrayInputStream b = new ByteArrayInputStream(bytes);
+            CtClass cc = pool.makeClass(b);
+            return cc.toClass();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

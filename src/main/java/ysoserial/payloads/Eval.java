@@ -92,8 +92,9 @@ public class Eval {
                 return null;
             }
         }
+        //javax.servlet
         code = code.replaceAll("([^\\.\\w]+)"+"(AsyncContext|AsyncEvent|AsyncListener|DispatcherType|Filter|FilterChain|FilterConfig|FilterRegistration|GenericFilter|GenericServlet|HttpConstraintElement|HttpMethodConstraintElement|MultipartConfigElement|ReadListener|Registration|RequestDispatcher|Servlet|ServletConfig|ServletContainerInitializer|ServletContext|ServletContextAttributeEvent|ServletContextAttributeListener|ServletContextEvent|ServletContextListener|ServletException|ServletInputStream|ServletOutputStream|ServletRegistration|ServletRequest|ServletRequestAttributeEvent|ServletRequestAttributeListener|ServletRequestEvent|ServletRequestListener|ServletRequestWrapper|ServletResponse|ServletResponseWrapper|ServletSecurityElement|SessionCookieConfig|SessionTrackingMode|SingleThreadModel|UnavailableException|WriteListener)"+ "([^\\w]+)","$1"+"javax.servlet."+"$2"+"$3");
-
+        //javax.servlet.http
         code = code.replaceAll("([^\\.\\w]+)"+"(Cookie|CookieNameValidator|HttpFilter|HttpServlet|HttpServletMapping|HttpServletRequest|HttpServletRequestWrapper|HttpServletResponse|HttpServletResponseWrapper|HttpSession|HttpSessionActivationListener|HttpSessionAttributeListener|HttpSessionBindingEvent|HttpSessionBindingListener|HttpSessionContext|HttpSessionEvent|HttpSessionIdListener|HttpSessionListener|HttpUpgradeHandler|HttpUtils|MappingMatch|Part|PushBuilder|RFC2109Validator|RFC6265Validator|WebConnection)"+ "([^\\w]+)","$1"+"javax.servlet.http."+"$2"+"$3");
 
         return code;
