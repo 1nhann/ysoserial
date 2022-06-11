@@ -25,10 +25,13 @@ public class JavaCompiler {
         Files.write(Paths.get(path), javacode.getBytes(StandardCharsets.UTF_8));
         File file = new File(path);
         Iterable fileObject = standardJavaFileManager.getJavaFileObjects(file);
-        ArrayList options = new ArrayList<String>(1);
-        options.add("-nowarn");
-        javaCompiler.getTask(null, standardJavaFileManager,null, options, null, fileObject).call();
+        javaCompiler.getTask(null, standardJavaFileManager,null, null, null, fileObject).call();
 
+        long classCount = Files.list(Paths.get(tmpPath)).filter(
+            path1 -> path1.toString().endsWith(".class")).count();
+        if(classCount != 1){
+            throw new Exception("[!] There have been more than one .class generated. Do not use inner class or anonymous class.");
+        }
         byte[] bytes = Files.readAllBytes(Paths.get(tmpPath + File.separator + className + ".class"));
 
         FileUtils.cleanDirectory(new File(tmpPath));
