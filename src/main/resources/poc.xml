@@ -1,1 +1,0 @@
-<?xml version="1.0"?><!DOCTYPE tag [<!ENTITY test SYSTEM 'file:///etc/passwd'>]><tag>&test;</tag>
