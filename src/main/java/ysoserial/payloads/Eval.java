@@ -57,10 +57,6 @@ public class Eval {
         }
         String b = new String(Base64.getEncoder().encode(bytes));
 
-        String command = "CLASS;" + b;
-        String javacode = command.substring(6);
-        byte[] classBytes = Base64.getDecoder().decode(javacode);
-
         return o.getObject("CLASS;" + b);
     }
     public static String getJavaCodeFromJSP(String poc) throws Exception{
