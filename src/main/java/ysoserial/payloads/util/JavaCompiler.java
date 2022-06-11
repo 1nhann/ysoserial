@@ -29,8 +29,10 @@ public class JavaCompiler {
 
         long classCount = Files.list(Paths.get(tmpPath)).filter(
             path1 -> path1.toString().endsWith(".class")).count();
-        if(classCount != 1){
+        if(classCount > 1){
             throw new Exception("[!] There have been more than one .class generated. Do not use inner class or anonymous class.");
+        }else if(classCount < 1){
+            throw new Exception("[!] No .class gennerate , there was something wrong.");
         }
         byte[] bytes = Files.readAllBytes(Paths.get(tmpPath + File.separator + className + ".class"));
 

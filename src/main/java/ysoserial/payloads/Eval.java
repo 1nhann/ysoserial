@@ -59,12 +59,8 @@ public class Eval {
 
         return o.getObject("CLASS;" + b);
     }
-    public static String getJavaCodeFromJSP(String poc) throws Exception{
-        FileReader f = new FileReader(poc);
-        char[] c = new char[0xffff];
-        f.read(c);
-        String code = new String(c);
-
+    public static String getJavaCodeFromJSP(String jspcode) throws Exception{
+        String code = jspcode;
         while (true){
             code = code.trim();
             int end = code.indexOf("%>");
