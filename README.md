@@ -1,3 +1,8 @@
+# added features
+
+1. Eval，可以处理 java code（使用 javac 动态编译）或 subclass of AbstractTranslet
+2. 基于 Eval ，实现 RCE回显、内存马
+3. 增加其他的 gadget 、payload
 
 # ysoserial
 
@@ -104,8 +109,8 @@ $ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 Common
 ## Installation
 
 1. Download the latest jar from
-[JitPack](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
-[![Download Latest Snapshot](https://img.shields.io/badge/download-master-green.svg)](
+   [JitPack](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
+   [![Download Latest Snapshot](https://img.shields.io/badge/download-master-green.svg)](
     https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
 
 Note that GitHub-hosted releases were removed in compliance with the
