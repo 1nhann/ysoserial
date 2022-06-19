@@ -40,10 +40,24 @@ public class Reflections {
 		return field;
 	}
 
-	public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
-		final Field field = getField(obj.getClass(), fieldName);
-		field.set(obj, value);
-	}
+//	public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
+//		final Field field = getField(obj.getClass(), fieldName);
+//		field.set(obj, value);
+//	}
+    public static void setFieldValue(Object obj, String fieldName, Object value) throws Exception {
+        Field field = getField(obj.getClass(), fieldName);
+        Field modifersField = Field.class.getDeclaredField("modifiers");
+        modifersField.setAccessible(true);
+        modifersField.setInt(field, field.getModifiers() & -17);
+        field.set(obj, value);
+    }
+    public static void setStaticFieldValue(Class clazz, String fieldName, Object value) throws Exception {
+        Field field = getField(clazz, fieldName);
+        Field modifersField = Field.class.getDeclaredField("modifiers");
+        modifersField.setAccessible(true);
+        modifersField.setInt(field, field.getModifiers() & -17);
+        field.set((Object)null, value);
+    }
 
 	public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
 		final Field field = getField(obj.getClass(), fieldName);
