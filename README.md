@@ -3,6 +3,7 @@
 1. Eval，可以处理 java code（使用动态编译，比javassist好）或 subclass of AbstractTranslet
 2. 基于 Eval ，实现 RCE回显、内存马
 3. 增加其他的 gadget 、payload
+4. 增加 useful utils
 
 # ysoserial
 
