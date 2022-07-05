@@ -3,20 +3,29 @@ package ysoserial.payloads.util;
 import okhttp3.*;
 
 import java.io.InputStream;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
 
     public String url;
-    public OkHttpClient client = new OkHttpClient();
+    public OkHttpClient client;
     public Request.Builder requestBuilder = new Request.Builder();
     public HttpUrl.Builder urlBuilder;
-    public FormBody.Builder formBodyBuilder = null;
+    public FormBody.Builder formBodyBuilder;
+    public Proxy proxy;
 
     public HttpRequest(String url){
         this.url = url;
         urlBuilder = HttpUrl.parse(url).newBuilder();
+    }
+    public HttpRequest(String url,String proxyHost,int proxyPort){
+        this.url = url;
+        urlBuilder = HttpUrl.parse(url).newBuilder();
+        this.proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost,proxyPort));
     }
 
     public HttpRequest addPostData(byte[] raw){
@@ -73,9 +82,16 @@ public class HttpRequest {
         }
         return requestBuilder.build();
     }
+    public OkHttpClient buildClient(){
+        if(this.proxy != null){
+            return new OkHttpClient.Builder().proxy(this.proxy).build();
+        }
+        return new OkHttpClient();
+    }
 
     public byte[] send(){
         Request request = buildRequest();
+        this.client =  buildClient();
         try {
             Response response = client.newCall(request).execute();
             InputStream s = response.body().byteStream();

