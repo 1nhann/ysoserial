@@ -94,7 +94,28 @@ public class Gadgets {
         map.put(key, val);
         return map;
     }
+    public static Map<Object, Object> createMap(Object key, Object value) {
+        HashMap<Object, Object> s = new HashMap();
+        try {
+            Reflections.setFieldValue(s, "size", 1);
 
+            Class nodeC;
+            try {
+                nodeC = Class.forName("java.util.HashMap$Node");
+            } catch (ClassNotFoundException var6) {
+                nodeC = Class.forName("java.util.HashMap$Entry");
+            }
+
+            Constructor<?> nodeCons = nodeC.getDeclaredConstructor(Integer.TYPE, Object.class, Object.class, nodeC);
+            nodeCons.setAccessible(true);
+            Object tbl = Array.newInstance(nodeC, 1);
+            Array.set(tbl, 0, nodeCons.newInstance(0, key, value, null));
+            Reflections.setFieldValue(s, "table", tbl);
+        }catch (Exception e){
+
+        }
+        return s;
+    }
 
     public static Object createTemplatesImpl ( final String command ) throws Exception {
         if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
