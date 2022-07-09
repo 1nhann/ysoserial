@@ -27,17 +27,22 @@ public class Reflections {
         }
     }
 
-    public static Field getField(final Class<?> clazz, final String fieldName) {
-        Field field = null;
+    public static Field getField (final Class<?> clazz, final String fieldName ) throws Exception {
         try {
-            field = clazz.getDeclaredField(fieldName);
-            setAccessible(field);
-        }
-        catch (NoSuchFieldException ex) {
-            if (clazz.getSuperclass() != null)
+            Field field = clazz.getDeclaredField(fieldName);
+            if ( field != null )
+                field.setAccessible(true);
+            else if ( clazz.getSuperclass() != null )
                 field = getField(clazz.getSuperclass(), fieldName);
+
+            return field;
         }
-        return field;
+        catch ( NoSuchFieldException e ) {
+            if ( !clazz.getSuperclass().equals(Object.class) ) {
+                return getField(clazz.getSuperclass(), fieldName);
+            }
+            throw e;
+        }
     }
 
     //	public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
