@@ -16,8 +16,7 @@ public class ServletShell{
     }
 
     public Object getObject(Class gadget) throws Exception {
-        InputStream inputStream = ServletShell.class.getClassLoader().getResourceAsStream("内存马/ServletShell.java");
-        byte[] bytes = IOUtils.toByteArray(inputStream);
+        byte[] bytes = ReadWrite.readResource(ServletShell.class,"内存马/ServletShell.java");
         String java = new String(bytes);
         byte[] b = JavaCompiler.compile("ServletShell",java);
         Class c = ClassFiles.bytesAsClass(b);

