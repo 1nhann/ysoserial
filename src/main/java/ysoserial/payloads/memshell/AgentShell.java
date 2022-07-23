@@ -6,6 +6,7 @@ import ysoserial.payloads.util.Encoder;
 import ysoserial.payloads.util.JavaCompiler;
 import ysoserial.payloads.util.ReadWrite;
 
+// ?password=1nhann&cmd=id
 public class AgentShell {
     public static void main(String[] args) {
 
