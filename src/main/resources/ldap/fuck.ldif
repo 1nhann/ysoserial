@@ -1,0 +1,4 @@
+dn: dc=ldap,dc=fuck
+dc: ldap
+objectClass: top
+objectClass: domain
