@@ -1,6 +1,5 @@
 package ysoserial.payloads.memshell;
 
-import org.apache.commons.io.IOUtils;
 import ysoserial.Serializer;
 import ysoserial.payloads.Eval;
 import ysoserial.payloads.RomeTools;
@@ -8,7 +7,6 @@ import ysoserial.payloads.util.ClassFiles;
 import ysoserial.payloads.util.JavaCompiler;
 import ysoserial.payloads.util.ReadWrite;
 
-import java.io.InputStream;
 
 //filter 内存马 /1nhann?cmd=id
 public class FilterShell {

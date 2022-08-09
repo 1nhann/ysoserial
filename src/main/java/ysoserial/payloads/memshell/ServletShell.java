@@ -1,7 +1,5 @@
 package ysoserial.payloads.memshell;
 
-import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
 import ysoserial.Serializer;
 import ysoserial.payloads.Eval;
 import ysoserial.payloads.RomeTools;
