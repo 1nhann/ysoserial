@@ -17,3 +17,5 @@ target/
 pwntest
 
 src/main/java/top/*
+
+#*.jar

