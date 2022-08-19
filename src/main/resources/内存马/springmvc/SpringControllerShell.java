@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 public class SpringControllerShell extends AbstractTranslet {
+    public SpringControllerShell() throws Exception{
+        namesArray = new String[]{"fuck"};
+    }
 
     static {
         try {

