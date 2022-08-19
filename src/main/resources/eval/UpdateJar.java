@@ -45,8 +45,11 @@ public class UpdateJar extends AbstractTranslet {
         }catch (Exception e){
             throw new RuntimeException(e);
         }finally {
-            new File(path).delete();
-            tmp.delete();
+            while (!new File(path).delete()){
+
+            }
+            while (!tmp.delete()){
+            }
         }
     }
     public UpdateJar() throws Exception{
