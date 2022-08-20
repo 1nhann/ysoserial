@@ -34,6 +34,6 @@ public class ApplicationFilterChain_doFilter {
 
         doFilter.insertBefore(code);
 
-        return new Eval().updateJar(gadget,jarPath,entryPath,clazz.toBytecode(),className);
+        return new Eval().updateJar(gadget,jarPath,entryPath,clazz.toBytecode());
     }
 }
