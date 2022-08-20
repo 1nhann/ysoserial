@@ -25,7 +25,7 @@ public class HttpRequest {
     public HttpRequest(String url,String proxyHost,int proxyPort){
         this.url = url;
         urlBuilder = HttpUrl.parse(url).newBuilder();
-        this.proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost,proxyPort));
+        this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost,proxyPort));
     }
 
     public HttpRequest addPostData(byte[] raw){

