@@ -1,12 +1,10 @@
 package ysoserial.payloads;
 
-import org.apache.bcel.generic.ARETURN;
 import org.apache.commons.lang.ArrayUtils;
 import ysoserial.Serializer;
 import ysoserial.payloads.util.Encoder;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class T3 {
 
