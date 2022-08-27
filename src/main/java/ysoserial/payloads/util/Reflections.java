@@ -1,9 +1,6 @@
 package ysoserial.payloads.util;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
 import sun.reflect.ReflectionFactory;
 
@@ -56,6 +53,13 @@ public class Reflections {
         modifersField.setInt(field, field.getModifiers() & -17);
         field.set(obj, value);
     }
+
+    public static void invokeMethod(Object o , String methodName ,Class[] methodArgTypes , Object[] arguments) throws Exception{
+        Method method = o.getClass().getMethod(methodName,methodArgTypes);
+        method.setAccessible(true);
+        method.invoke(o,arguments);
+    }
+
     public static void setStaticFieldValue(Class clazz, String fieldName, Object value) throws Exception {
         Field field = getField(clazz, fieldName);
         Field modifersField = Field.class.getDeclaredField("modifiers");
