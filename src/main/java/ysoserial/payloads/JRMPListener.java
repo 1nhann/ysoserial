@@ -38,6 +38,10 @@ import ysoserial.payloads.util.Reflections;
 @Authors({ Authors.MBECHLER })
 public class JRMPListener extends PayloadRunner implements ObjectPayload<UnicastRemoteObject> {
 
+    public UnicastRemoteObject getObject ( int port ) throws Exception{
+        return getObject(String.valueOf(port));
+    }
+
     public UnicastRemoteObject getObject ( final String command ) throws Exception {
         int jrmpPort = Integer.parseInt(command);
         UnicastRemoteObject uro = Reflections.createWithConstructor(ActivationGroupImpl.class, RemoteObject.class, new Class[] {

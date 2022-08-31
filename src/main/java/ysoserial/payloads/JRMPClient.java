@@ -53,6 +53,11 @@ import ysoserial.payloads.util.PayloadRunner;
 @Authors({ Authors.MBECHLER })
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
 
+    public Registry getObject(String host , int port) throws Exception{
+        String command = host + ":" + String.valueOf(port);
+        return getObject(command);
+    }
+
     public Registry getObject ( final String command ) throws Exception {
 
         String host;
