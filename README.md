@@ -1,28 +1,30 @@
 # added features
 
-1. 基于动态编译，实现 RCE回显、内存马、持久化后门
-2. 补充 gadget 、payload
-3. 补充 useful tools
+2022.9.5 自实现 jdk7u21、jdk8u20
 
-# timeline
+2022.8.27 攻击T3
 
-2022.8.20 解决tomcat的header过大问题，增加 Value 型内存马
+2022.8.20 解决tomcat的header过大问题，Value 内存马
 
-2022.8.19 增加 tomcat 持久化后门的 payload ，增加Listener内存马
+2022.8.19 tomcat 持久化后门 ，Listener内存马
 
 2022.8.10 springmvc interceptor内存马
 
 2022.8.9 springmvc controller内存马
 
-2022.8.4 内嵌 ldap server
+2022.8.4 evil ldap server 用于 jndi 注入高版本绕过
 
-2022.7.23 增加agent型内存马
+2022.7.23 agent型内存马
 
-2022.7.9 增加heassian序列化的util，更新Reflections
+2022.7.9 heassian序列化、反序列化
 
-2022.6.11 更新了Eval，使用javac动态编译实现。增加 Filter 型、Servlet 型内存马，增加emptySignedObject，用于二次反序列化
+2022.6.26 Encoder，ReadWrite 工具类
 
-2022.4.22 增加 RCE 回显 payload，shiro550，更新工具类
+2022.6.11 JavaCompiler 工具类，使用javac动态编译实现Eavl，CC12，emptySignedObject二次反序列化，Filter 型、Servlet 型内存马
+
+2022.6.10 RomeTools，Apereo CAS 4.1 RCE，CC8，CC9，CC10
+
+2022.4.22 RCE 回显，shiro550，RequestHttp工具类，CB no CC
 
 # ysoserial
 
