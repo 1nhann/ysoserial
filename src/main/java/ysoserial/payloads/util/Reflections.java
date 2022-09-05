@@ -78,6 +78,11 @@ public class Reflections {
         setAccessible(ctor);
         return ctor;
     }
+    public static Constructor<?> getFirstCtor(Class clazz) throws Exception {
+        final Constructor<?> ctor = clazz.getDeclaredConstructors()[0];
+        setAccessible(ctor);
+        return ctor;
+    }
 
     public static Object newInstance(String className, Object ... args) throws Exception {
         return getFirstCtor(className).newInstance(args);

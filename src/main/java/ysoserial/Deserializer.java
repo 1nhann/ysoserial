@@ -1,5 +1,7 @@
 package ysoserial;
 
+import ysoserial.payloads.util.ReadWrite;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +23,23 @@ public class Deserializer implements Callable<Object> {
 		final ByteArrayInputStream in = new ByteArrayInputStream(serialized);
 		return deserialize(in);
 	}
+    public static Object deserialize(final byte[] serialized,boolean writeFile) throws Exception {
+        if (writeFile){
+            String tmp = ReadWrite.writeTempFile(serialized);
+            try {
+                byte[] b = ReadWrite.readFile(tmp);
+                return deserialize(b);
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                while (!new File(tmp).delete()){
+                }
+            }
+        }else {
+            return deserialize(serialized);
+        }
+        return null;
+    }
 
 	public static Object deserialize(final InputStream in) throws ClassNotFoundException, IOException {
 		final ObjectInputStream objIn = new ObjectInputStream(in);
