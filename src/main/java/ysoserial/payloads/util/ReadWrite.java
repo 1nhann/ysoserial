@@ -1,6 +1,6 @@
 package ysoserial.payloads.util;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -38,7 +38,7 @@ public class ReadWrite {
     public static byte[] readResource(Class thisclass,String path) throws Exception{
 
         InputStream inputStream = thisclass.getClassLoader().getResourceAsStream(path);
-        byte[] bytes = IOUtils.toByteArray(inputStream);
+        byte[] bytes = readAllBytesFromInputStream(inputStream);
 
         return bytes;
     }
