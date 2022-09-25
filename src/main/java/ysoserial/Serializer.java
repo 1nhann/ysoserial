@@ -23,8 +23,13 @@ public class Serializer implements Callable<byte[]> {
 	}
 
 	public static void serialize(final Object obj, final OutputStream out) throws IOException {
-		final ObjectOutputStream objOut = new ObjectOutputStream(out);
-		objOut.writeObject(obj);
+        if (obj instanceof byte[]){
+            byte[] b = (byte[])obj;
+            out.write(b);
+        }else {
+            final ObjectOutputStream objOut = new ObjectOutputStream(out);
+            objOut.writeObject(obj);
+        }
 	}
 
 }

