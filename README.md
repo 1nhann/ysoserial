@@ -55,6 +55,8 @@ public class Test {
 
 ### 注入内存马：
 
+> 支持所有底层用了 `TemplatesImpl` 的链子
+
 filter 内存马：
 
 ```java
@@ -125,6 +127,8 @@ public class Test {
 ```
 
 ### 解决 tomcat 的 header 过大问题
+
+> 支持所有底层用了 `TemplatesImpl` 的链子
 
 分离 payload ，body 存储，动态加载：
 
@@ -213,6 +217,8 @@ public class Test {
 
 ### tomcat 持久化后门：
 
+> 支持所有底层用了 `TemplatesImpl` 的链子
+
 劫持 `ApplicationFilterChain` 的 `doFilter()` ：
 
 ```java
@@ -258,6 +264,8 @@ public class Test {
 
 
 ### RCE 回显：
+
+> 支持所有底层用了 `TemplatesImpl` 的链子
 
 linux 通杀回显：
 
