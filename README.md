@@ -20,7 +20,7 @@
 
 2022.6.26 Encoder，ReadWrite 工具类
 
-2022.6.11 JavaCompiler 工具类，使用javac动态编译实现Eavl，CC12，emptySignedObject二次反序列化，Filter 型、Servlet 型内存马
+2022.6.11 JavaCompiler 工具类，使用javac动态编译实现Eval（凡是底层用了 `TemplatesImpl` 的链子，都可以通过 Eval 的包装实现任意 java 代码执行，从而实现注入内存马、RCE回显等功能），CC12，emptySignedObject二次反序列化，Filter 型、Servlet 型内存马
 
 2022.6.10 RomeTools，Apereo CAS 4.1 RCE，CC8，CC9，CC10
 
